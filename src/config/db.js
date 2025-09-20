@@ -2,43 +2,14 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 const connectDB = async () => {
+  const dbURI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@jwtprojectcluster.iczsizz.mongodb.net/${process.env.COLLECTION_NAME}?retryWrites=true&w=majority&appName=jwtprojectcluster`;
   try {
-    // Use MONGODB_URI if available (for Render deployment), otherwise construct from individual variables
-    const dbURI =
-      process.env.MONGODB_URI ||
-      `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@jwtprojectcluster.iczsizz.mongodb.net/${process.env.COLLECTION_NAME}?retryWrites=true&w=majority&appName=jwtprojectcluster`;
+    await mongoose.connect(dbURI);
+    console.log("Connected to MongoDB");
 
-    const options = {
-      serverSelectionTimeoutMS: 30000, // 30 seconds
-      socketTimeoutMS: 45000, // 45 seconds
-      bufferMaxEntries: 0,
-      bufferCommands: false,
-      maxPoolSize: 10,
-      minPoolSize: 5,
-      maxIdleTimeMS: 30000,
-      retryWrites: true,
-      w: "majority",
-    };
-
-    await mongoose.connect(dbURI, options);
-    console.log("✅ Connected to MongoDB successfully");
-
-    // Handle connection events
-    mongoose.connection.on("error", (err) => {
-      console.error("❌ MongoDB connection error:", err);
-    });
-
-    mongoose.connection.on("disconnected", () => {
-      console.log("⚠️ MongoDB disconnected");
-    });
-
-    mongoose.connection.on("reconnected", () => {
-      console.log("✅ MongoDB reconnected");
-    });
+    // mongodb+srv://jascarbenish_db_user:<db_password>@jwtprojectcluster.iczsizz.mongodb.net/?retryWrites=true&w=majority&appName=jwtprojectcluster
   } catch (error) {
-    console.error("❌ Error connecting to MongoDB:", error.message);
-    process.exit(1); // Exit process if database connection fails
+    console.error("Error connecting to MongoDB:", error);
   }
 };
-
 export default connectDB;

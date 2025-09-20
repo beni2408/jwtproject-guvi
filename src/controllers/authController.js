@@ -69,21 +69,10 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    // Check if JWT secret is available
-    const jwtSecret = process.env.JWT_AUTH_SECRET_KEY;
-    if (!jwtSecret) {
-      console.error(
-        "❌ JWT_AUTH_SECRET_KEY is not defined in environment variables"
-      );
-      return res.status(500).json({
-        status: "error",
-        message: "Server configuration error",
-      });
-    }
-
-    const token = jwt.sign({ id: checkingUser._id }, jwtSecret, {
-      expiresIn: "24h",
-    });
+    const token = jwt.sign(
+      { id: checkingUser._id },
+      process.env.JWT_AUTH_SECRET_KEY
+    );
 
     res.status(200).json({
       status: "success",
