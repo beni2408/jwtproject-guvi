@@ -30,8 +30,20 @@ export const authUser = async (req, res, next) => {
   }
 
   try {
+    // Check if JWT secret is available
+    const jwtSecret = process.env.JWT_AUTH_SECRET_KEY;
+    if (!jwtSecret) {
+      console.error(
+        "❌ JWT_AUTH_SECRET_KEY is not defined in environment variables"
+      );
+      return res.status(500).json({
+        status: "error",
+        message: "Server configuration error",
+      });
+    }
+
     // Verify the JWT token
-    const decoded = jwt.verify(token, process.env.JWT_AUTH_SECRET_KEY);
+    const decoded = jwt.verify(token, jwtSecret);
     console.log("Decoded token data:", decoded);
     console.log("User ID:", decoded.id);
     console.log("Issued at (iat):", decoded.iat);
